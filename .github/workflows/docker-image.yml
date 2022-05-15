@@ -1,15 +1,17 @@
 name: Docker Image CI
-
 on:
   push:
     branches: [ master ]
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ctse-lab-12:$(date +%s)
+      run: docker build -t '${{secrets.DOCKER_LOGIN}}'/ctse-lab-12:'${{github.sha}}' .
+      
+    - name: docker login
+      run: docker login --username '${{secrets.DOCKER_LOGIN}}' --password '${{secrets.DOCKER_PASSWORD}}'
+
+    - name: push docker image
+      run: docker push '${{secrets.DOCKER_LOGIN}}'/ctse-lab-12:'${{github.sha}}'
